@@ -18,8 +18,10 @@
 #include <netinet/in.h>
 #include <netdb.h> 
 
+int sockfd;
+
 void connectToSocket(){
-     int sockfd, portno = 80, n;
+    int portno = 80, n;
 
     struct sockaddr_in serv_addr;
     struct hostent *server;
@@ -29,7 +31,7 @@ void connectToSocket(){
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0) 
         error("ERROR opening socket");
-    server = gethostbyname("localhost");
+    server = gethostbyname("www.google.com");
     if (server == NULL) {
         fprintf(stderr,"ERROR, no such host\n");
         exit(0);
@@ -41,15 +43,21 @@ void connectToSocket(){
          server->h_length);
     serv_addr.sin_port = htons(portno);
     if (connect(sockfd,(struct sockaddr *)&serv_addr,sizeof(serv_addr)) < 0) 
-        error("ERROR connecting");
+        printf("ERROR connecting\n");
 }
 
 void disconnectSocket(){
-    printf("2");
+    sockfd = -1;
 }
 
 void performGet(){
-    printf("3");
+    char buf[2056];
+    char *header = "GET / HTTP/1.1\r\n\r\n";
+    send(sockfd,header,strlen(header),0);
+    int byte_count = recv(sockfd,buf,sizeof(buf)-1,0); // <-- -1 to leave room for a null terminator
+    buf[byte_count] = 0; // <-- add the null terminator
+    printf("recv()'d %d bytes of data in buf\n",byte_count);
+    printf("%s\n",buf);
 }
 
 void handleInput(int option) {
