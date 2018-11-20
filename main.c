@@ -19,7 +19,13 @@
  */
 int main(int argc, char** argv) {
 
-    showMenuContent();
+    char i;
+    do {
+        showMenuContent();
+        i = getchar();
+        
+    } while(i != '4');
+
     return (EXIT_SUCCESS);
 }
 
@@ -27,6 +33,6 @@ void showMenuContent() {
     printf("1. Connect to socket\n");
     printf("2. Disconnect\n");
     printf("3. GET\n");
-    printf("4. Exit");
+    printf("4. Exit\n");
 }
 
